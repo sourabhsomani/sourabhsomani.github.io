@@ -1160,7 +1160,26 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                             str_data+=(index%2)?"</div>":"";
                     });
                     $(".service_inner").html(str_data);
-                })
+                });
+            setTimeout(function(){$.ajax({
+      url: 'https://api.instagram.com/v1/users/self/media/recent/?access_token=2943494465.63ea313.36dd1d9dd37a447d92e6d7f359df252a&callback=https://www.sourabhsomani.com',
+
+      error: function() {
+        alert('error');
+      },
+
+      success: function(data) {
+        var d=data.data;
+          var str="";
+         $(d).each(function(index,item){
+            str+=`<li><a href="${item.link}"><img src="${item.images.thumbnail.url}"></a></li>`
+        });
+          $(".instagram_area ul").html(str);
+      },
+      type: 'GET',
+      dataType: "jsonp"
+   });
+                                 },1000)
         </script>
     </body>
 </html>
