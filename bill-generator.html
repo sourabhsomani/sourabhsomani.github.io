@@ -569,8 +569,13 @@
         function calculateRow(input) {
             const row = input.closest('tr');
             const inputs = row.querySelectorAll('input');
-            const qty = parseFloat(inputs[2].value) || 0;
-            const price = parseFloat(inputs[4].value) || 0;
+            
+            // Find quantity and price inputs more reliably
+            const qtyInput = row.querySelector('.qty-cell input');
+            const priceInput = row.querySelector('.price-cell input');
+            
+            const qty = parseFloat(qtyInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
             
             const baseAmount = qty * price;
             const gstAmount = baseAmount * (currentTaxRate / 100);
@@ -593,10 +598,13 @@
             let baseTotal = 0;
 
             rows.forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                if (inputs.length >= 3) {
-                    const qty = parseFloat(inputs[2].value) || 0;
-                    const price = parseFloat(inputs[4].value) || 0;
+                // Use class selectors to find inputs more reliably
+                const qtyInput = row.querySelector('.qty-cell input');
+                const priceInput = row.querySelector('.price-cell input');
+                
+                if (qtyInput && priceInput) {
+                    const qty = parseFloat(qtyInput.value) || 0;
+                    const price = parseFloat(priceInput.value) || 0;
                     
                     const baseAmount = qty * price;
                     const gstAmount = baseAmount * (currentTaxRate / 100);
