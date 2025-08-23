@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,14 +107,25 @@
             text-align: left !important;
             min-width: 180px;
             max-width: 220px;
+            vertical-align: top !important;
+            padding: 6px 4px !important;
         }
 
-        .item-name-cell input {
+        .item-name-cell input, .item-name-cell textarea {
             width: 100%;
             border: none;
             background: transparent;
             font-size: 11px;
             padding: 2px;
+            resize: none;
+            overflow: hidden;
+            min-height: 20px;
+            line-height: 1.3;
+            font-family: Arial, sans-serif;
+        }
+
+        .item-name-cell textarea {
+            height: auto;
         }
 
         .qty-cell, .price-cell {
@@ -346,7 +356,7 @@
                 print-color-adjust: exact;
             }
             
-            .editable-input, .quotation-right input, .item-name-cell input {
+            .editable-input, .quotation-right input, .item-name-cell input, .item-name-cell textarea {
                 border: none !important;
                 background: transparent !important;
                 outline: none !important;
@@ -405,7 +415,7 @@
                 <tr>
                     <td class="serial-cell">1</td>
                     <td class="item-name-cell">
-                        <input type="text" value="Intel Core i5 12400F 12 Gen Generation Desktop PC Processor CPU with 18MB Cache and up to 4.40 GHz">
+                        <textarea onInput="autoResize(this)" placeholder="Enter item name">Intel Core i5 12400F 12 Gen Generation Desktop PC Processor CPU with 18MB Cache and up to 4.40 GHz</textarea>
                     </td>
                     <td class="hsn-cell">
                         <input type="text" class="editable-input" value="84733010">
@@ -535,7 +545,7 @@
             row.innerHTML = `
                 <td class="serial-cell">${itemCount}</td>
                 <td class="item-name-cell">
-                    <input type="text" placeholder="Enter item name">
+                    <textarea onInput="autoResize(this)" placeholder="Enter item name"></textarea>
                 </td>
                 <td class="hsn-cell">
                     <input type="text" class="editable-input" placeholder="HSN/SAC">
@@ -668,6 +678,7 @@
             
             return convertHundreds(Math.floor(num / 10000000)) + "Crore " + convertHundreds(Math.floor((num % 10000000) / 100000)) + (((num % 10000000) / 100000) > 0 ? "Lakh " : "") + convertHundreds(Math.floor((num % 100000) / 1000)) + (((num % 100000) / 1000) > 0 ? "Thousand " : "") + convertHundreds(num % 1000);
         }
+        
         function updateDate() {
             const dateInput = document.getElementById('estimateDate');
             const today = new Date();
@@ -676,10 +687,21 @@
             const year = today.getFullYear();
             dateInput.value = `${day}-${month}-${year}`;
         }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
         // Initialize with sample data
         document.addEventListener('DOMContentLoaded', function() {
             updateDate();
             calculateTotals();
+            
+            // Auto-resize existing textareas
+            document.querySelectorAll('.item-name-cell textarea').forEach(textarea => {
+                autoResize(textarea);
+            });
         });
     </script>
 </body>
