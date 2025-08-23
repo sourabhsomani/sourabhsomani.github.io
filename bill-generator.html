@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -380,7 +381,7 @@
                 </div>
                 <div>
                     <strong>Date : </strong>
-                    <input type="text" value="16-08-2025">
+                    <input type="text" id="estimateDate" value="16-08-2025">
                 </div>
             </div>
         </div>
@@ -627,6 +628,7 @@
             document.getElementById('items-tbody').innerHTML = '';
             itemCount = 0;
             addItem();
+            updateDate();
             calculateTotals();
         }
 
@@ -666,9 +668,17 @@
             
             return convertHundreds(Math.floor(num / 10000000)) + "Crore " + convertHundreds(Math.floor((num % 10000000) / 100000)) + (((num % 10000000) / 100000) > 0 ? "Lakh " : "") + convertHundreds(Math.floor((num % 100000) / 1000)) + (((num % 100000) / 1000) > 0 ? "Thousand " : "") + convertHundreds(num % 1000);
         }
-
+        function updateDate() {
+            const dateInput = document.getElementById('estimateDate');
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // January is 0
+            const year = today.getFullYear();
+            dateInput.value = `${day}-${month}-${year}`;
+        }
         // Initialize with sample data
         document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
             calculateTotals();
         });
     </script>
