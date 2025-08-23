@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotation Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            font-size: 12px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #9B8BC4;
+            overflow: hidden;
+        }
+
+        /* Header with purple background */
+        .main-header {
+            background: #9B8BC4;
+            color: white;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .main-header .left {
+            font-size: 14px;
+        }
+
+        .main-header .right {
+            font-size: 12px;
+        }
+
+        /* Quotation section */
+        .quotation-info {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .quotation-left {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .quotation-right {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .quotation-right input {
+            border: none;
+            background: transparent;
+            text-align: right;
+            font-size: 12px;
+            width: 180px;
+        }
+
+        .quotation-right input:focus {
+            background: #f0f0f0;
+            outline: 1px solid #9B8BC4;
+        }
+
+        /* Items table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .items-table th {
+            background: #9B8BC4;
+            color: white;
+            padding: 8px 6px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid #8A7BB3;
+        }
+
+        .items-table td {
+            padding: 6px;
+            border: 1px solid #ddd;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .items-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .item-name-cell {
+            text-align: left !important;
+            min-width: 180px;
+            max-width: 220px;
+        }
+
+        .item-name-cell input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 11px;
+            padding: 2px;
+        }
+
+        .qty-cell, .price-cell {
+            width: 80px;
+        }
+
+        .hsn-cell {
+            width: 90px;
+        }
+
+        .unit-cell {
+            width: 50px;
+        }
+
+        .gst-cell {
+            width: 100px;
+        }
+
+        .amount-cell {
+            width: 90px;
+            text-align: right !important;
+            padding-right: 10px;
+            font-weight: bold;
+        }
+
+        .serial-cell {
+            width: 30px;
+        }
+
+        .editable-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            padding: 2px;
+        }
+
+        .editable-input:focus {
+            background: #f0f0f0;
+            outline: 1px solid #9B8BC4;
+        }
+
+        .price-input {
+            text-align: right;
+        }
+
+        /* Total row */
+        .total-row {
+            background: #f5f5f5;
+            font-weight: bold;
+        }
+
+        .total-row td {
+            border: 1px solid #bbb;
+        }
+
+        /* Controls */
+        .controls {
+            padding: 15px;
+            text-align: center;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn {
+            background: #9B8BC4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 0 5px;
+        }
+
+        .btn:hover {
+            background: #8A7BB3;
+        }
+
+        /* Bottom section with purple background */
+        .bottom-section {
+            background: #9B8BC4;
+            color: white;
+            padding: 15px;
+        }
+
+        .amounts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .amounts-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .amount-in-words {
+            font-style: italic;
+            font-size: 12px;
+            max-width: 400px;
+        }
+
+        .amount-figures {
+            text-align: right;
+            font-size: 12px;
+            min-width: 120px;
+        }
+
+        .total-amount {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* Tax and Amounts side by side */
+        .tax-amounts-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 15px;
+            gap: 20px;
+        }
+
+        .tax-section {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .amounts-section {
+            text-align: right;
+            min-width: 200px;
+            padding-top: 10px;
+        }
+
+        .amount-line {
+            margin: 8px 0;
+            font-size: 12px;
+        }
+
+        .amount-line.total-amount {
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        .tax-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .tax-table th {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 6px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .tax-table td {
+            padding: 6px;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: 11px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .controls {
+                display: none !important;
+            }
+            
+            .container {
+                border: 2px solid #9B8BC4 !important;
+                margin: 0 !important;
+                max-width: none !important;
+                width: 100% !important;
+                box-shadow: none !important;
+            }
+            
+            .main-header {
+                background: #9B8BC4 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .items-table th {
+                background: #9B8BC4 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .bottom-section {
+                background: #9B8BC4 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .tax-table th {
+                background: rgba(255,255,255,0.2) !important;
+                color: white !important;
+            }
+            
+            .tax-table td {
+                color: white !important;
+            }
+            
+            .items-table tr:nth-child(even) {
+                background-color: #f9f9f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .editable-input, .quotation-right input, .item-name-cell input {
+                border: none !important;
+                background: transparent !important;
+                outline: none !important;
+            }
+            
+            @page {
+                margin: 0.5in;
+                size: A4;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Header -->
+        <div class="main-header">
+            <div class="left">Estimate For</div>
+            <div class="right">Estimate Details</div>
+        </div>
+
+        <!-- Quotation Info -->
+        <div class="quotation-info">
+            <div class="quotation-left">
+                <div style="margin-bottom: 8px;">
+                    <strong>Quotation</strong>
+                </div>
+            </div>
+            <div class="quotation-right">
+                <div style="margin-bottom: 8px;">
+                    <strong>Estimate No. : </strong>
+                    <input type="text" value="SN/71474223124826">
+                </div>
+                <div>
+                    <strong>Date : </strong>
+                    <input type="text" value="16-08-2025">
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th class="serial-cell">#</th>
+                    <th class="item-name-cell">Item name</th>
+                    <th class="hsn-cell">HSN/ SAC</th>
+                    <th class="qty-cell">Quantity</th>
+                    <th class="unit-cell">Unit</th>
+                    <th class="price-cell">Price/ Unit</th>
+                    <th class="gst-cell">GST</th>
+                    <th class="amount-cell">Amount</th>
+                </tr>
+            </thead>
+            <tbody id="items-tbody">
+                <!-- Sample row -->
+                <tr>
+                    <td class="serial-cell">1</td>
+                    <td class="item-name-cell">
+                        <input type="text" value="Intel Core i5 12400F 12 Gen Generation Desktop PC Processor CPU with 18MB Cache and up to 4.40 GHz">
+                    </td>
+                    <td class="hsn-cell">
+                        <input type="text" class="editable-input" value="84733010">
+                    </td>
+                    <td class="qty-cell">
+                        <input type="number" class="editable-input" value="1" min="1" onchange="calculateRow(this)">
+                    </td>
+                    <td class="unit-cell">
+                        <input type="text" class="editable-input" value="PCS">
+                    </td>
+                    <td class="price-cell">
+                        <input type="number" class="editable-input price-input" value="8050.85" step="0.01" onchange="calculateRow(this)">
+                    </td>
+                    <td class="gst-cell">₹ 1,449.15 (18%)</td>
+                    <td class="amount-cell">₹ 9,500.00</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3"><strong>Total</strong></td>
+                    <td id="total-qty"><strong>9</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td id="total-gst"><strong>₹ 12,416.94</strong></td>
+                    <td id="total-amount" class="amount-cell"><strong>₹ 81,400.00</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div style="margin-bottom: 10px;">
+                <label for="tax-rate">Total Tax Rate: </label>
+                <input type="number" id="tax-rate" value="18" min="0" max="30" style="width: 60px; padding: 4px;" onchange="updateTaxRate()">%
+                <span style="margin-left: 20px; font-size: 11px; color: #666;">
+                    (SGST: <span id="display-sgst">9</span>% + CGST: <span id="display-cgst">9</span>%)
+                </span>
+            </div>
+            <button class="btn" onclick="addItem()">Add Item</button>
+            <button class="btn" onclick="calculateTotals()">Calculate Totals</button>
+            <button class="btn" onclick="printDocument()">Print / Save as PDF</button>
+            <button class="btn" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+            <div class="amounts-header">
+                <span>Estimate Amount In Words</span>
+                <span>Amounts</span>
+            </div>
+            
+            <div class="amounts-row">
+                <div class="amount-in-words" id="amount-in-words">
+                    Eighty One Thousand Four Hundred Rupees only
+                </div>
+                <div class="amount-figures">
+                    
+                </div>
+            </div>
+
+            <!-- Tax and Amounts Section Side by Side -->
+            <div class="tax-amounts-section">
+                <!-- Tax Table on Left -->
+                <div class="tax-section">
+                    <table class="tax-table">
+                        <thead>
+                            <tr>
+                                <th>Tax type</th>
+                                <th>Taxable amount</th>
+                                <th>Rate</th>
+                                <th>Tax amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SGST</td>
+                                <td>₹ <span id="sgst-taxable">68,983.06</span></td>
+                                <td><span id="sgst-rate">9</span>%</td>
+                                <td>₹ <span id="sgst-amount">6,208.48</span></td>
+                            </tr>
+                            <tr>
+                                <td>CGST</td>
+                                <td>₹ <span id="cgst-taxable">68,983.06</span></td>
+                                <td><span id="cgst-rate">9</span>%</td>
+                                <td>₹ <span id="cgst-amount">6,208.48</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Amounts on Right -->
+                <div class="amounts-section">
+                    <div class="amount-line">
+                        Sub Total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ₹ <span id="sub-total">81,400.00</span>
+                    </div>
+                    <div class="amount-line total-amount">
+                        <strong>Total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ₹ <span id="final-total">81,400.00</span></strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let itemCount = 1;
+        let currentTaxRate = 18; // Default 18%
+
+        function updateTaxRate() {
+            currentTaxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+            const halfRate = currentTaxRate / 2;
+            
+            // Update display rates
+            document.getElementById('display-sgst').textContent = halfRate;
+            document.getElementById('display-cgst').textContent = halfRate;
+            document.getElementById('sgst-rate').textContent = halfRate;
+            document.getElementById('cgst-rate').textContent = halfRate;
+            
+            // Recalculate all amounts
+            calculateTotals();
+        }
+
+        function addItem() {
+            itemCount++;
+            const tbody = document.getElementById('items-tbody');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td class="serial-cell">${itemCount}</td>
+                <td class="item-name-cell">
+                    <input type="text" placeholder="Enter item name">
+                </td>
+                <td class="hsn-cell">
+                    <input type="text" class="editable-input" placeholder="HSN/SAC">
+                </td>
+                <td class="qty-cell">
+                    <input type="number" class="editable-input" value="1" min="1" onchange="calculateRow(this)">
+                </td>
+                <td class="unit-cell">
+                    <input type="text" class="editable-input" value="PCS">
+                </td>
+                <td class="price-cell">
+                    <input type="number" class="editable-input price-input" value="0.00" step="0.01" onchange="calculateRow(this)">
+                </td>
+                <td class="gst-cell">₹ 0.00 (18%)</td>
+                <td class="amount-cell">₹ 0.00</td>
+            `;
+            
+            tbody.appendChild(row);
+        }
+
+        function calculateRow(input) {
+            const row = input.closest('tr');
+            const inputs = row.querySelectorAll('input');
+            const qty = parseFloat(inputs[2].value) || 0;
+            const price = parseFloat(inputs[4].value) || 0;
+            
+            const baseAmount = qty * price;
+            const gstAmount = baseAmount * (currentTaxRate / 100);
+            const totalAmount = baseAmount + gstAmount;
+            
+            // Update GST cell
+            row.cells[6].textContent = `₹ ${gstAmount.toFixed(2)} (${currentTaxRate}%)`;
+            
+            // Update amount cell
+            row.cells[7].textContent = `₹ ${totalAmount.toFixed(2)}`;
+            
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#items-tbody tr');
+            let totalQty = 0;
+            let totalGst = 0;
+            let totalAmount = 0;
+            let baseTotal = 0;
+
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs.length >= 3) {
+                    const qty = parseFloat(inputs[2].value) || 0;
+                    const price = parseFloat(inputs[4].value) || 0;
+                    
+                    const baseAmount = qty * price;
+                    const gstAmount = baseAmount * (currentTaxRate / 100);
+                    const rowTotal = baseAmount + gstAmount;
+                    
+                    totalQty += qty;
+                    baseTotal += baseAmount;
+                    totalGst += gstAmount;
+                    totalAmount += rowTotal;
+                    
+                    // Update this row's display
+                    row.cells[6].textContent = `₹ ${gstAmount.toFixed(2)} (${currentTaxRate}%)`;
+                    row.cells[7].textContent = `₹ ${rowTotal.toFixed(2)}`;
+                }
+            });
+
+            // Update totals
+            document.getElementById('total-qty').innerHTML = `<strong>${totalQty}</strong>`;
+            document.getElementById('total-gst').innerHTML = `<strong>₹ ${totalGst.toFixed(2)}</strong>`;
+            document.getElementById('total-amount').innerHTML = `<strong>₹ ${totalAmount.toFixed(2)}</strong>`;
+            document.getElementById('sub-total').textContent = totalAmount.toFixed(2);
+            document.getElementById('final-total').textContent = totalAmount.toFixed(2);
+
+            // Update tax breakdown (SGST and CGST are each half of total tax rate)
+            const halfRate = currentTaxRate / 2;
+            const sgstAmount = baseTotal * (halfRate / 100);
+            const cgstAmount = baseTotal * (halfRate / 100);
+            
+            document.getElementById('sgst-taxable').textContent = baseTotal.toFixed(2);
+            document.getElementById('cgst-taxable').textContent = baseTotal.toFixed(2);
+            document.getElementById('sgst-amount').textContent = sgstAmount.toFixed(2);
+            document.getElementById('cgst-amount').textContent = cgstAmount.toFixed(2);
+
+            // Update amount in words
+            document.getElementById('amount-in-words').textContent = numberToWords(Math.round(totalAmount)) + " Rupees only";
+        }
+
+        function clearAll() {
+            document.getElementById('items-tbody').innerHTML = '';
+            itemCount = 0;
+            addItem();
+            calculateTotals();
+        }
+
+        function printDocument() {
+            calculateTotals();
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
+
+        function numberToWords(num) {
+            if (num === 0) return "Zero";
+            
+            const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", 
+                         "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+            const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+            
+            function convertHundreds(n) {
+                let result = "";
+                if (n > 99) {
+                    result += ones[Math.floor(n / 100)] + " Hundred ";
+                    n %= 100;
+                }
+                if (n > 19) {
+                    result += tens[Math.floor(n / 10)] + " ";
+                    n %= 10;
+                }
+                if (n > 0) {
+                    result += ones[n] + " ";
+                }
+                return result;
+            }
+            
+            if (num < 1000) return convertHundreds(num).trim();
+            if (num < 100000) return convertHundreds(Math.floor(num / 1000)) + "Thousand " + convertHundreds(num % 1000);
+            if (num < 10000000) return convertHundreds(Math.floor(num / 100000)) + "Lakh " + convertHundreds(Math.floor((num % 100000) / 1000)) + (((num % 100000) / 1000) > 0 ? "Thousand " : "") + convertHundreds(num % 1000);
+            
+            return convertHundreds(Math.floor(num / 10000000)) + "Crore " + convertHundreds(Math.floor((num % 10000000) / 100000)) + (((num % 10000000) / 100000) > 0 ? "Lakh " : "") + convertHundreds(Math.floor((num % 100000) / 1000)) + (((num % 100000) / 1000) > 0 ? "Thousand " : "") + convertHundreds(num % 1000);
+        }
+
+        // Initialize with sample data
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateTotals();
+        });
+    </script>
+</body>
+</html>
